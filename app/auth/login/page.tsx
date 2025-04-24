@@ -1,46 +1,38 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { BarChart2, AlertCircle } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// 別のアプローチを試してみましょう - クライアントコンポーネントをもっとシンプルにします
+// useSearchParamsを使用せず、単純なログインフォーム
 function LoginPage() {
-  // ローディング状態のフォールバックを表示する（Suspenseの代わり）
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-[400px] p-8">
-        <LoginContent />
+        <LoginForm />
       </Card>
     </div>
   );
 }
 
-// Loginコンテンツコンポーネント
-function LoginContent() {
+// Loginフォームコンポーネント
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  // useSearchParamsをtry-catchで囲む
-  let redirectPath = '/';
-  try {
-    const searchParams = useSearchParams();
-    redirectPath = searchParams?.get('redirect') || '/';
-  } catch (e) {
-    console.error('SearchParams error:', e);
-    // デフォルトのリダイレクトパスを使用
-  }
-  
   const supabase = createClientComponentClient();
+
+  // デフォルトのリダイレクト先
+  const redirectPath = '/';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
